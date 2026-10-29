@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="format-detection" content="telephone=no,email=no,address=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>人生计时 · LifeClock — 把人生摊开成秒</title>
+<meta name="description" content="人生计时：把出生那一刻当成原点，实时显示已活时长、累计总数与下一个生日倒计时。黑白极简、无广告、无网络权限。">
+<link rel="icon" href="data:,">
+<style>
+/* ══════════════════════════════════════════════
+   TOKENS — 与 app 的 Tokens.kt 同源
+   ══════════════════════════════════════════════ */
+/* ══ 内联图标（离线可用，取代 remixicon CDN） ══ */
+i[class*="ri-"]{display:inline-block;width:1em;height:1em;background-color:currentColor;
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;
+  -webkit-mask-size:100% 100%;mask-size:100% 100%;flex:none}
+.ri-download-2-line{-webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M11 3h2v8.2l3.1-3.1 1.42 1.42L12 15.06 6.48 9.52 7.9 8.1 11 11.2V3z'/><path d='M4 17.4h16V20H4z'/></svg>");mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M11 3h2v8.2l3.1-3.1 1.42 1.42L12 15.06 6.48 9.52 7.9 8.1 11 11.2V3z'/><path d='M4 17.4h16V20H4z'/></svg>")}
+.ri-arrow-right-line{-webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12.9 4.5 20.4 12l-7.5 7.5-1.42-1.42 5.08-5.08H3.6v-2h12.96L11.48 5.92 12.9 4.5z'/></svg>");mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12.9 4.5 20.4 12l-7.5 7.5-1.42-1.42 5.08-5.08H3.6v-2h12.96L11.48 5.92 12.9 4.5z'/></svg>")}
+.ri-moon-line{-webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M20.6 14.9A9.2 9.2 0 1 1 9.1 3.4a7.4 7.4 0 0 0 11.5 11.5z'/></svg>");mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M20.6 14.9A9.2 9.2 0 1 1 9.1 3.4a7.4 7.4 0 0 0 11.5 11.5z'/></svg>")}
+.ri-sun-line{-webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='4.1'/><path d='M11 1h2v3.4h-2zM11 19.6h2V23h-2zM1 11h3.4v2H1zM19.6 11H23v2h-3.4zM4.35 3.06l1.42-1.42 2.4 2.4-1.42 1.42zM15.83 17.36l1.42-1.42 2.4 2.4-1.42 1.42zM3.06 19.65l2.4-2.4 1.42 1.42-2.4 2.4zM17.36 8.17l2.4-2.4 1.42 1.42-2.4 2.4z'/></svg>");mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='4.1'/><path d='M11 1h2v3.4h-2zM11 19.6h2V23h-2zM1 11h3.4v2H1zM19.6 11H23v2h-3.4zM4.35 3.06l1.42-1.42 2.4 2.4-1.42 1.42zM15.83 17.36l1.42-1.42 2.4 2.4-1.42 1.42zM3.06 19.65l2.4-2.4 1.42 1.42-2.4 2.4zM17.36 8.17l2.4-2.4 1.42 1.42-2.4 2.4z'/></svg>")}
+.ri-image-line{-webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M3 4.4h18v15.2H3V4.4zm2 2v11.2h14V6.4H5z'/><path d='M15.9 7.6a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5z'/><path d='m6.2 16.2 3.9-4.8 2.7 3.2 2.2-2.7 3 4.3z'/></svg>");mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M3 4.4h18v15.2H3V4.4zm2 2v11.2h14V6.4H5z'/><path d='M15.9 7.6a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5z'/><path d='m6.2 16.2 3.9-4.8 2.7 3.2 2.2-2.7 3 4.3z'/></svg>")}
+
+:root{
+  --bg:#000000; --fg:#FFFFFF; --gray:#8E8E93;
+  --surface:#101012; --surface-2:#161618;
+  --hair:rgba(255,255,255,.14); --hair-strong:rgba(255,255,255,.32);
+  --line:rgba(255,255,255,.07);
+  --glass:rgba(0,0,0,.62);
+  --btn-fg:#000000; --btn-bg:#FFFFFF;
+  --glow:rgba(255,255,255,.07);
+  --r-s:8px; --r-m:14px; --r-l:22px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","PingFang SC","Hiragino Sans GB","Noto Sans SC","Source Han Sans SC","Microsoft YaHei",sans-serif;
+  --serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC","Noto Serif SC","SimSun",serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+html[data-theme="light"]{
+  --bg:#FFFFFF; --fg:#000000; --gray:#8E8E93;
+  --surface:#F5F5F7; --surface-2:#EFEFF2;
+  --hair:rgba(0,0,0,.13); --hair-strong:rgba(0,0,0,.3);
+  --line:rgba(0,0,0,.06);
+  --glass:rgba(255,255,255,.72);
+  --btn-fg:#FFFFFF; --btn-bg:#000000;
+  --glow:rgba(0,0,0,.05);
+}
+
+/* ══════════════════════════════════════════════
+   BASE — 禁缩放 / 禁蓝高光 / 禁长按菜单
+   ══════════════════════════════════════════════ */
+*,*::before,*::after{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-tap-highlight-color:rgba(0,0,0,0);
+  -webkit-touch-callout:none;
+}
+html{
+  -webkit-text-size-adjust:100%;text-size-adjust:100%;
+  touch-action:manipulation;
+  scroll-behavior:smooth;
+  background:var(--bg);
+}
+body{
+  margin:0;background:var(--bg);color:var(--fg);
+  font-family:var(--sans);font-size:15px;line-height:1.7;letter-spacing:.01em;
+  overflow-x:hidden;touch-action:pan-y;
+  -webkit-text-size-adjust:100%;text-size-adjust:none;
+  -webkit-user-select:none;user-select:none;
+  overscroll-behavior-x:none;
+  -webkit-font-smoothing:antialiased;
+}
+body *{touch-action:pan-y}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;touch-action:manipulation}
+:focus,:focus-visible,:active{outline:none;-webkit-focus-ring-color:transparent}
+::selection{background:rgba(142,142,147,.35);color:inherit}
+::-moz-selection{background:rgba(142,142,147,.35);color:inherit}
+
+/* 数字：tnum 等宽 */
+.n{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;letter-spacing:-.035em}
+.tick{animation:tick 220ms var(--ease)}
+@keyframes tick{from{opacity:.3;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+
+/* 质感层：极细网格 + 噪点 */
+.grid-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+  background-image:
+    linear-gradient(to right,var(--line) 1px,transparent 1px),
+    linear-gradient(to bottom,var(--line) 1px,transparent 1px);
+  background-size:96px 96px;
+  -webkit-mask-image:radial-gradient(120% 78% at 50% 0%,#000 12%,transparent 68%);
+  mask-image:radial-gradient(120% 78% at 50% 0%,#000 12%,transparent 68%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.032;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>");
+}
+.spot{
+  position:fixed;left:0;top:0;width:640px;height:640px;z-index:0;pointer-events:none;
+  border-radius:50%;opacity:0;transition:opacity .6s var(--ease);
+  background:radial-gradient(circle,var(--glow) 0%,transparent 62%);
+  transform:translate3d(-50%,-50%,0);
+}
+@media(hover:hover){.spot{opacity:1}}
+
+.progress{
+  position:fixed;top:0;left:0;right:0;height:1px;z-index:50;
+  background:linear-gradient(90deg,transparent,var(--fg));
+  transform:scaleX(0);transform-origin:0 50%;
+}
+
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,48px);position:relative;z-index:1}
+
+/* ══════════════════════════════════════════════
+   HEADER
+   ══════════════════════════════════════════════ */
+.top{position:sticky;top:0;z-index:40;background:var(--glass);-webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid var(--line)}
+.top-in{display:flex;align-items:center;gap:clamp(16px,3vw,40px);height:62px}
+.brand{display:flex;flex-direction:column;gap:2px;padding:6px 0;flex:none;min-width:0}
+.brand b{font-size:12px;font-weight:500;letter-spacing:.22em;white-space:nowrap;width:max-content;max-width:100%}
+.brand span{font-size:8.5px;letter-spacing:.16em;color:var(--gray);white-space:nowrap;width:max-content;max-width:100%}
+.nav{display:none;gap:26px;margin-left:auto}
+@media(min-width:820px){.nav{display:flex}}
+.nav a{font-size:10.5px;letter-spacing:.16em;color:var(--gray);transition:color .25s var(--ease)}
+@media(hover:hover){.nav a:hover{color:var(--fg)}}
+.icon-btn{
+  margin-left:auto;width:36px;height:36px;border-radius:50%;border:1px solid var(--hair);
+  display:grid;place-items:center;flex:none;
+  transition:opacity .18s var(--ease),transform .18s var(--ease),border-color .25s;
+}
+@media(min-width:820px){.icon-btn{margin-left:0}}
+.icon-btn:active{opacity:.5;transform:scale(.9)}
+.icon-btn i{font-size:15px;line-height:1}
+html[data-theme="dark"] .i-sun,html[data-theme="light"] .i-moon{display:none}
+
+/* ══════════════════════════════════════════════
+   HERO
+   ══════════════════════════════════════════════ */
+.hero{padding:clamp(40px,8vw,96px) 0 clamp(24px,4vw,48px);display:grid;gap:clamp(40px,7vw,72px);align-items:center}
+@media(min-width:940px){.hero{grid-template-columns:1.06fr .94fr;gap:clamp(40px,6vw,80px)}}
+
+.eyebrow{display:flex;align-items:center;gap:10px;font-size:9.5px;letter-spacing:.26em;color:var(--gray);text-transform:uppercase}
+.eyebrow i{display:block;width:18px;height:1px;background:var(--hair-strong)}
+
+h1{
+  margin:clamp(18px,3vw,28px) 0 0;
+  font-family:var(--serif);font-weight:300;
+  font-size:clamp(46px,9.6vw,94px);
+  line-height:.99;letter-spacing:.005em;
+}
+h1 .hl{display:block;overflow:hidden;padding:0 .02em .06em}
+h1 .hl > span{display:block;transform:translateY(108%);animation:rise 1.05s var(--ease-out) forwards}
+h1 .hl:nth-child(2) > span{animation-delay:.1s}
+h1 em{font-style:normal;position:relative;padding-right:.06em}
+h1 em::after{
+  content:"";position:absolute;left:0;right:.06em;bottom:.1em;height:1px;background:currentColor;opacity:.5;
+  transform:scaleX(0);transform-origin:0 50%;animation:rule 1.2s .5s var(--ease-out) forwards;
+}
+@keyframes rise{to{transform:translateY(0)}}
+@keyframes rule{to{transform:scaleX(1)}}
+
+.lead{margin:clamp(18px,3vw,26px) 0 0;max-width:34ch;font-size:14.5px;line-height:1.85;color:var(--gray)}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:clamp(24px,4vw,34px)}
+.btn{
+  position:relative;display:inline-flex;align-items:center;gap:10px;overflow:hidden;
+  padding:15px 24px;border-radius:var(--r-m);font-size:12.5px;letter-spacing:.1em;font-weight:500;
+  transition:transform .2s var(--ease),opacity .2s var(--ease),border-color .3s var(--ease);
+}
+.btn:active{transform:scale(.975);opacity:.85}
+.btn span{position:relative;z-index:1}
+.btn i{position:relative;z-index:1;font-size:14px;transition:transform .4s var(--ease-out)}
+.btn-solid{background:var(--btn-bg);color:var(--btn-fg)}
+.btn-ghost{border:1px solid var(--hair-strong);color:var(--fg)}
+@media(hover:hover){
+  .btn-solid:hover i{transform:translateY(2px)}
+  .btn-ghost:hover{border-color:var(--fg)}
+  .btn-ghost:hover i{transform:translateX(3px)}
+}
+.meta{margin-top:16px;font-size:9.5px;letter-spacing:.16em;color:var(--gray);opacity:.85}
+
+/* 手机 */
+.phone-wrap{position:relative}
+.phone-wrap::before{
+  content:"";position:absolute;inset:2% -6% -8%;border-radius:50%;
+  background:radial-gradient(ellipse at 50% 42%,rgba(255,255,255,.09),transparent 60%);
+  filter:blur(18px);pointer-events:none;
+}
+html[data-theme="light"] .phone-wrap::before{background:radial-gradient(ellipse at 50% 42%,rgba(0,0,0,.07),transparent 60%)}
+.phone{width:min(358px,100%);margin:0 auto;position:relative;will-change:transform}
+@media(min-width:940px){
+  .phone{transform:perspective(1600px) rotateY(-8deg) rotateX(4deg);transition:transform 1s var(--ease-out)}
+  .phone-wrap:hover .phone{transform:perspective(1600px) rotateY(-2deg) rotateX(1deg) translateY(-4px)}
+}
+.frame{
+  padding:9px;border-radius:46px;background:linear-gradient(160deg,#26262a,#0d0d0f 46%,#1d1d21);
+  box-shadow:0 0 0 1px var(--hair),0 1px 0 rgba(255,255,255,.14) inset,0 40px 90px -40px rgba(0,0,0,.9),0 2px 6px rgba(0,0,0,.5);
+}
+html[data-theme="light"] .frame{background:linear-gradient(160deg,#fff,#e8e8ee 52%,#f7f7fa);box-shadow:0 0 0 1px var(--hair),0 30px 70px -40px rgba(0,0,0,.35)}
+.screen{
+  position:relative;overflow:hidden;border-radius:38px;background:var(--bg);
+  padding:0 19px 24px;box-shadow:0 0 0 1px var(--line) inset;
+}
+.screen::after{
+  content:"";position:absolute;left:0;right:0;top:0;height:180px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),transparent);
+}
+.statusbar{display:flex;align-items:center;justify-content:space-between;height:34px;padding-top:4px;font-size:10px;color:var(--gray)}
+.statusbar .right{display:flex;align-items:center;gap:5px}
+.bars{display:flex;align-items:flex-end;gap:1.5px;height:8px}
+.bars i{width:2px;background:currentColor;border-radius:1px;display:block}
+.bars i:nth-child(1){height:3px}.bars i:nth-child(2){height:5px}.bars i:nth-child(3){height:7px}.bars i:nth-child(4){height:8px}
+.batt{width:16px;height:8px;border:1px solid currentColor;border-radius:2px;position:relative;opacity:.9}
+.batt::after{content:"";position:absolute;inset:1.5px;right:4px;background:currentColor;border-radius:1px}
+
+.scr-head{display:flex;align-items:flex-start;justify-content:space-between;padding-top:8px}
+.scr-head b{display:block;font-size:12px;font-weight:500;letter-spacing:.42em}
+.scr-head span{display:block;margin-top:3px;font-size:8.5px;letter-spacing:.22em;color:var(--gray)}
+.scr-tools{display:flex;gap:13px;align-items:center;font-size:10px;color:var(--gray)}
+.scr-tools i{font-size:13px;line-height:1}
+
+.sec-row{display:flex;align-items:baseline;gap:7px;margin-top:30px}
+.sec-row b{font-size:10px;font-weight:500;letter-spacing:.2em}
+.sec-row span{font-size:8px;letter-spacing:.18em;color:var(--gray)}
+
+.bigline{display:flex;align-items:flex-end;margin-top:9px}
+.bigline .v{font-size:38px;font-weight:300;line-height:1;letter-spacing:-.045em}
+.bigline .m{font-size:28px;font-weight:300;line-height:1;letter-spacing:-.04em}
+.bigline .unit{font-size:10.5px;color:var(--gray);margin:0 9px 2px 3px}
+.bigline .unit.last{margin-right:0}
+.clockline{display:flex;align-items:flex-end;margin-top:6px}
+.clockline .v{font-size:42px;font-weight:200;line-height:1;letter-spacing:-.045em}
+.clockline .c{font-size:42px;font-weight:200;line-height:1;color:var(--gray);opacity:.7}
+.hr{height:1px;background:var(--hair);margin:22px 0}
+.hr.soft{background:var(--line)}
+.totals{display:grid;grid-template-columns:1fr 1fr;gap:16px 10px}
+.totals .k{font-size:8.5px;letter-spacing:.16em;color:var(--gray)}
+.totals .v{margin-top:4px;font-size:19px;font-weight:300;letter-spacing:-.02em}
+.bday{display:flex;align-items:flex-end;gap:8px;margin-top:8px}
+.bday .v{font-size:38px;font-weight:300;line-height:1;letter-spacing:-.045em}
+.bday .unit{font-size:10.5px;color:var(--gray);margin-bottom:2px}
+.bday .t{font-size:15px;font-weight:300;color:var(--gray);margin-bottom:5px}
+.bday-sub{margin-top:7px;font-size:9.5px;color:var(--fg);opacity:.72}
+.birthline{margin-top:24px;font-size:8.5px;letter-spacing:.12em;color:var(--gray)}
+.birthline + .birthline{margin-top:3px;opacity:.7}
+
+/* 指标条 */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--hair);margin-top:clamp(20px,4vw,44px)}
+.stat{padding:22px 0 26px;position:relative}
+.stat + .stat{padding-left:clamp(14px,3vw,32px)}
+.stat + .stat::before{content:"";position:absolute;left:0;top:22px;bottom:26px;width:1px;background:var(--line)}
+.stat .v{font-size:clamp(22px,4.6vw,34px);font-weight:200;letter-spacing:-.03em;line-height:1.05}
+.stat .v small{font-size:11px;letter-spacing:.1em;opacity:.5;margin-left:3px;font-weight:400}
+.stat .k{margin-top:8px;font-size:9px;letter-spacing:.14em;color:var(--gray);line-height:1.6}
+
+/* ══════════════════════════════════════════════
+   MARQUEE
+   ══════════════════════════════════════════════ */
+.marquee{
+  margin:clamp(44px,7vw,88px) 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  overflow:hidden;padding:16px 0;position:relative;z-index:1;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+}
+.marquee .track{display:flex;width:max-content;animation:slide 42s linear infinite}
+.marquee span{
+  display:inline-flex;align-items:center;gap:22px;padding-right:22px;
+  font-size:10.5px;letter-spacing:.3em;color:var(--gray);text-transform:uppercase;white-space:nowrap;
+}
+.marquee span::after{content:"◆";font-size:5px;opacity:.55}
+@keyframes slide{to{transform:translateX(-33.3333%)}}
+
+/* ══════════════════════════════════════════════
+   SECTION — 左栏 sticky + 右栏内容
+   ══════════════════════════════════════════════ */
+.sec{padding:clamp(56px,9vw,110px) 0;border-top:1px solid var(--line);position:relative}
+.sec-grid{display:grid;gap:clamp(24px,4vw,36px)}
+@media(min-width:900px){.sec-grid{grid-template-columns:264px 1fr;gap:clamp(36px,6vw,88px)}}
+.sec-aside{position:relative}
+@media(min-width:900px){.sec-aside{position:sticky;top:104px;align-self:start}}
+.num{
+  font-family:var(--serif);font-size:clamp(54px,8vw,84px);line-height:.9;font-weight:300;
+  letter-spacing:-.04em;color:transparent;-webkit-text-stroke:1px var(--hair-strong);
+}
+@supports not ((-webkit-text-stroke:1px #000)){
+  .num{color:var(--gray);opacity:.3}
+}
+.kicker{margin-top:14px;display:flex;align-items:center;gap:10px;font-size:9px;letter-spacing:.26em;color:var(--gray);text-transform:uppercase}
+.kicker i{display:block;width:14px;height:1px;background:var(--hair-strong)}
+.sec h2{
+  margin:14px 0 0;font-family:var(--serif);font-weight:300;
+  font-size:clamp(24px,3.4vw,33px);line-height:1.32;letter-spacing:.01em;
+}
+.sec .desc{margin:20px 0 0;font-size:13.5px;line-height:1.9;color:var(--gray);max-width:52ch}
+
+/* 条目 */
+.items{display:grid;gap:0;margin-top:clamp(24px,4vw,40px)}
+@media(min-width:760px){.items{grid-template-columns:1fr 1fr;column-gap:clamp(28px,4vw,56px)}}
+.item{
+  position:relative;padding:24px 0;border-top:1px solid var(--line);
+  transition:transform .5s var(--ease-out);
+}
+.item::before{
+  content:"";position:absolute;left:-100vw;right:-100vw;top:-1px;bottom:0;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--surface) 22%,var(--surface) 78%,transparent);
+  opacity:0;transition:opacity .5s var(--ease);
+}
+@media(hover:hover){
+  .item:hover{transform:translateX(6px)}
+  .item:hover::before{opacity:.75}
+}
+.item .k{position:relative;font-size:8.5px;letter-spacing:.22em;color:var(--gray);text-transform:uppercase}
+.item h3{position:relative;margin:9px 0 0;font-size:15.5px;font-weight:500;letter-spacing:.01em}
+.item p{position:relative;margin:8px 0 0;font-size:12.8px;line-height:1.85;color:var(--gray)}
+.item p b{color:var(--fg);font-weight:500}
+
+/* 时间线 */
+.timeline{position:relative;margin-top:clamp(26px,4vw,40px);padding-left:24px}
+.timeline::before{content:"";position:absolute;left:3px;top:8px;bottom:10px;width:1px;background:linear-gradient(180deg,var(--hair-strong),var(--line) 70%,transparent)}
+.tl{position:relative;display:grid;grid-template-columns:64px 1fr;gap:16px;padding:14px 0;align-items:baseline}
+.tl::before{
+  content:"";position:absolute;left:-24px;top:21px;width:6px;height:6px;border-radius:50%;
+  border:1px solid var(--gray);background:var(--bg);box-shadow:0 0 0 4px var(--bg);
+}
+.tl.on::before{background:var(--fg);border-color:var(--fg)}
+.tl .d{font-size:9.5px;letter-spacing:.16em;color:var(--gray);font-variant-numeric:tabular-nums}
+.tl .t{font-size:13.5px}
+.tl .t small{display:block;margin-top:3px;font-size:11.5px;color:var(--gray);letter-spacing:0;line-height:1.7}
+
+/* 小组件 */
+.widgets{display:grid;gap:14px;margin-top:clamp(26px,4vw,40px)}
+@media(min-width:640px){.widgets{grid-template-columns:1fr 1fr}}
+.wg{
+  position:relative;overflow:hidden;
+  background:linear-gradient(158deg,var(--surface-2),var(--surface));
+  border-radius:var(--r-l);padding:18px 18px 19px;
+  box-shadow:0 0 0 1px var(--line) inset,0 24px 40px -34px rgba(0,0,0,.9);
+  transition:transform .5s var(--ease-out),box-shadow .5s var(--ease);
+}
+.wg::after{content:"";position:absolute;inset:0 0 auto;height:1px;background:linear-gradient(90deg,transparent,var(--hair-strong),transparent)}
+@media(hover:hover){.wg:hover{transform:translateY(-3px);box-shadow:0 0 0 1px var(--hair) inset,0 30px 50px -30px rgba(0,0,0,.9)}}
+.wg .k{font-size:8.5px;letter-spacing:.18em;color:var(--gray)}
+.wg .v{margin-top:8px;font-size:25px;font-weight:300;letter-spacing:-.03em;line-height:1.1}
+.wg .v small{font-size:11px;color:var(--gray);margin:0 3px;font-weight:400}
+.wg .s{margin-top:7px;font-size:9.5px;letter-spacing:.1em;color:var(--gray)}
+
+/* 分享卡 */
+.share{
+  position:relative;margin-top:clamp(26px,4vw,40px);max-width:400px;
+  border-radius:var(--r-l);padding:24px;
+  background:#000;color:#fff;
+  box-shadow:0 0 0 1px rgba(255,255,255,.12) inset,0 30px 60px -40px rgba(0,0,0,.9);
+  transform:rotate(-1.4deg);transition:transform .6s var(--ease-out);
+}
+html[data-theme="light"] .share{background:#fff;color:#000;box-shadow:0 0 0 1px rgba(0,0,0,.1) inset,0 24px 50px -40px rgba(0,0,0,.4)}
+@media(hover:hover){.share:hover{transform:rotate(0deg) translateY(-3px)}}
+.share .k{font-size:9px;letter-spacing:.34em;opacity:.85}
+.share .v{margin-top:14px;font-size:29px;font-weight:300;letter-spacing:-.04em;line-height:1.06}
+.share .v em{font-style:normal;font-size:11px;opacity:.55;margin:0 5px 0 3px}
+.share .t{margin-top:12px;font-size:9px;letter-spacing:.14em;opacity:.5}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chip{
+  padding:8px 14px;border-radius:999px;border:1px solid var(--hair);
+  font-size:11px;letter-spacing:.06em;color:var(--gray);
+  transition:color .3s var(--ease),border-color .3s var(--ease);
+}
+.chip.on{color:var(--btn-fg);background:var(--btn-bg);border-color:transparent}
+
+/* 规格表 */
+.spec{margin:clamp(24px,4vw,38px) 0 0;border-top:1px solid var(--line)}
+.spec .row{display:grid;grid-template-columns:100px 1fr;gap:2px 18px;padding:16px 0;border-bottom:1px solid var(--line)}
+@media(min-width:680px){.spec .row{grid-template-columns:170px 1fr}}
+.spec dt{font-size:9.5px;letter-spacing:.16em;color:var(--gray);padding-top:3px}
+.spec dd{margin:0;font-size:13px;line-height:1.8}
+.spec dd .mono{font-family:var(--mono);font-size:12px;letter-spacing:0}
+
+/* 限制 */
+.limits{margin:clamp(24px,4vw,38px) 0 0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.limits li{display:grid;grid-template-columns:14px 1fr;gap:12px;padding:16px 0;border-bottom:1px solid var(--line);font-size:12.8px;color:var(--gray);line-height:1.85}
+.limits li::before{content:"—";opacity:.55}
+.limits li b{color:var(--fg);font-weight:500}
+
+/* 隐私 */
+.privacy-grid{display:grid;gap:24px;margin-top:clamp(24px,4vw,38px)}
+@media(min-width:820px){.privacy-grid{grid-template-columns:1fr .92fr;gap:56px;align-items:start}}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;
+  border:1px solid var(--hair);font-size:10px;letter-spacing:.14em;color:var(--gray);
+}
+.badge i{width:4px;height:4px;border-radius:50%;background:var(--fg);opacity:.7;display:block}
+
+/* 结尾 */
+.end{position:relative;padding:clamp(64px,10vw,120px) 0 0;border-top:1px solid var(--line);overflow:hidden}
+.end h2{
+  margin:0;font-family:var(--serif);font-weight:300;
+  font-size:clamp(30px,5.6vw,54px);line-height:1.24;letter-spacing:.01em;
+}
+.end p{margin:16px 0 0;color:var(--gray);font-size:13.5px;max-width:42ch;line-height:1.85}
+.wm{
+  margin-top:clamp(36px,6vw,64px);
+  font-size:clamp(64px,15.6vw,220px);line-height:.78;font-weight:200;
+  letter-spacing:-.055em;white-space:nowrap;opacity:.055;
+}
+.foot{
+  margin-top:clamp(28px,4vw,44px);padding:22px 0 34px;border-top:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:10px 26px;align-items:center;
+  font-size:9px;letter-spacing:.16em;color:var(--gray);
+}
+.foot .spacer{flex:1}
+
+/* 安装三步 */
+.steps{margin-top:clamp(28px,4vw,42px);border-top:1px solid var(--line)}
+.step{display:grid;grid-template-columns:34px minmax(0,1fr);gap:4px 14px;padding:16px 0;border-bottom:1px solid var(--line);align-items:start}
+.step i{grid-column:1;grid-row:1;font-style:normal;font-size:9px;letter-spacing:.18em;color:var(--gray);padding-top:3px}
+.step b{grid-column:2;grid-row:1;font-size:13px;font-weight:500;min-width:0}
+.step span{grid-column:2;grid-row:2;font-size:12px;color:var(--gray);line-height:1.75;min-width:0}
+@media(min-width:700px){
+  .step{grid-template-columns:52px 200px minmax(0,1fr);align-items:baseline;gap:2px 18px}
+  .step span{grid-column:3;grid-row:1}
+}
+
+/* ══════════════════════════════════════════════
+   动效 / 响应式收尾
+   ══════════════════════════════════════════════ */
+.rev{opacity:0;transform:translateY(20px);transition:opacity .9s var(--ease-out),transform .9s var(--ease-out)}
+.rev.in{opacity:1;transform:none}
+.rev.d1{transition-delay:.07s}
+.rev.d2{transition-delay:.14s}
+.rev.d3{transition-delay:.21s}
+
+@media(max-width:700px){
+  body::after{opacity:.022}
+  .grid-bg{background-size:72px 72px;opacity:.4}
+  .nav{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .rev{opacity:1;transform:none;transition:none}
+  h1 .hl > span{transform:none;animation:none}
+  h1 em::after{transform:none;animation:none}
+  .tick{animation:none}
+  .marquee .track{animation:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="spot" id="spot" aria-hidden="true"></div>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#top" aria-label="人生计时">
+      <b>人生计时</b>
+      <span>LIFE CLOCK</span>
+    </a>
+    <nav class="nav">
+      <a href="#s1">已活时长</a>
+      <a href="#s2">生日倒计时</a>
+      <a href="#s3">提醒</a>
+      <a href="#s4">小组件</a>
+      <a href="#s7">规格</a>
+    </nav>
+    <button class="icon-btn" id="themeBtn" aria-label="切换主题">
+      <i class="ri-moon-line i-moon"></i>
+      <i class="ri-sun-line i-sun"></i>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="wrap">
+    <div class="hero">
+      <div>
+        <div class="eyebrow"><i></i><span>Android 原生 · v1.1.0</span></div>
+        <h1>
+          <span class="hl"><span>把人生</span></span>
+          <span class="hl"><span>摊开成<em>秒</em>。</span></span>
+        </h1>
+        <p class="lead">以出生那一刻为原点，实时显示你已经活了多久、距离下一个生日还有几天。黑白配色，没有广告，不联网。</p>
+        <div class="cta">
+          <a class="btn btn-solid" href="download/LifeClock.apk" download><span>下载安装包</span><i class="ri-download-2-line"></i></a>
+          <a class="btn btn-ghost" href="#s1"><span>功能一览</span><i class="ri-arrow-right-line"></i></a>
+        </div>
+        <div class="meta">ANDROID 8.0+ · 无网络权限 · 数据只在本机</div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="phone" id="phone">
+          <div class="frame">
+            <div class="screen">
+              <div class="statusbar">
+                <span id="sbTime">9:41</span>
+                <span class="right">
+                  <span class="bars"><i></i><i></i><i></i><i></i></span>
+                  <span style="font-size:9px">5G</span>
+                  <span class="batt"></span>
+                </span>
+              </div>
+
+              <div class="scr-head">
+                <div>
+                  <b>人生计时</b>
+                  <span>LIFE CLOCK</span>
+                </div>
+                <div class="scr-tools">
+                  <i class="ri-image-line"></i>
+                  <i class="ri-moon-line"></i>
+                  <span style="font-size:10.5px">设置</span>
+                </div>
+              </div>
+
+              <div class="sec-row"><b>已活至今</b><span>ELAPSED</span></div>
+
+              <div class="bigline">
+                <span class="v n" id="y">28</span><span class="unit">年</span>
+                <span class="m n" id="mo">11</span><span class="unit">月</span>
+                <span class="m n" id="d">26</span><span class="unit last">天</span>
+              </div>
+
+              <div class="clockline">
+                <span class="v n" id="h">06</span><span class="c">:</span><span class="v n" id="mi">02</span><span class="c">:</span><span class="v n" id="s">08</span>
+              </div>
+
+              <div class="hr"></div>
+
+              <div class="totals">
+                <div><div class="k">总天数</div><div class="v n" id="td">10,587</div></div>
+                <div><div class="k">总小时</div><div class="v n" id="th">254,094</div></div>
+                <div><div class="k">总分钟</div><div class="v n" id="tm">15,245,642</div></div>
+                <div><div class="k">总秒数</div><div class="v n" id="ts">914,738,528</div></div>
+              </div>
+
+              <div class="hr"></div>
+
+              <div class="sec-row"><b>下一个生日</b><span>NEXT BIRTHDAY</span></div>
+              <div class="bday">
+                <span class="v n" id="bd">4</span><span class="unit">天</span><span class="t n" id="btime">17:57:52</span>
+              </div>
+              <div class="bday-sub" id="bdate">2026年11月2日 · 星期一 · 年满 29 岁</div>
+
+              <div class="hr soft"></div>
+              <div class="birthline">出生 · 1997年11月2日 08:30</div>
+              <div class="birthline">Asia/Shanghai (UTC+8)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats rev">
+      <div class="stat"><div class="v n">1<small>s</small></div><div class="k">刷新间隔 · 对齐整秒<br>不累积漂移</div></div>
+      <div class="stat"><div class="v n">4<small>项</small></div><div class="k">累计总数<br>天 / 时 / 分 / 秒</div></div>
+      <div class="stat"><div class="v n">0<small>次</small></div><div class="k">需要联网的功能<br>APK 内无 INTERNET 权限</div></div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <span>Life Clock</span><span>已活时长</span><span>生日倒计时</span><span>桌面小组件</span><span>黑白极简</span><span>数据不出本机</span>
+      <span>Life Clock</span><span>已活时长</span><span>生日倒计时</span><span>桌面小组件</span><span>黑白极简</span><span>数据不出本机</span>
+      <span>Life Clock</span><span>已活时长</span><span>生日倒计时</span><span>桌面小组件</span><span>黑白极简</span><span>数据不出本机</span>
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <section class="sec" id="s1">
+    <div class="wrap sec-grid">
+      <aside class="sec-aside rev">
+        <div class="num">01</div>
+        <div class="kicker"><i></i><span>Elapsed</span></div>
+        <h2>不是一句「你今年几岁」，<br>是时分秒一起在走。</h2>
+      </aside>
+      <div>
+        <p class="desc rev">首页只用两组信息讲清一件事：按年月日拆开的已活时长，和四个不断累加的物理总数。数字用等宽字形（tnum），每秒跳动时整行不会左右抖。</p>
+        <div class="items">
+          <div class="item rev"><div class="k">Tick</div><h3>对齐整秒的心跳</h3><p>每秒只在整秒那一刻发一帧，误差不累积；退到后台自动停表，回来立刻续上，<b>不耗电、不泄漏</b>。</p></div>
+          <div class="item rev d1"><div class="k">Calendar</div><h3>年 → 月 → 日 逐级取整</h3><p>1 月 31 日到 2 月 28 日这种「月份天数不同」不会跳月、不出负数。日历按本地挂钟走。</p></div>
+          <div class="item rev d2"><div class="k">Physics</div><h3>总数按真实经过时间</h3><p>总天数、时、分、秒取物理时长。夏令时那天本地只过 23 小时，总数就是 23 小时——两个口径都对。</p></div>
+          <div class="item rev d3"><div class="k">Motion</div><h3>220ms 的克制动效</h3><p>数字变化 220ms 淡入 + 0.94→1 的轻微缩放；页面切换 240ms 淡入淡出。够看见变化，抢不到注意力。</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec" id="s2">
+    <div class="wrap sec-grid">
+      <aside class="sec-aside rev">
+        <div class="num">02</div>
+        <div class="kicker"><i></i><span>Next Birthday</span></div>
+        <h2>生日不是一年想一次，<br>是常驻在屏幕上。</h2>
+      </aside>
+      <div>
+        <p class="desc rev">下一个生日的天、时、分、秒一起倒数，下一行给出日期、星期与「年满几岁」。生日当天直接换成「今天生日」，不做无意义的 0 天。</p>
+
+        <div class="timeline rev">
+          <div class="tl"><div class="d">T − 7</div><div class="t">提前 7 天<small>留出订蛋糕、约人的时间</small></div></div>
+          <div class="tl"><div class="d">T − 3</div><div class="t">提前 3 天<small>可选，不想要就关掉</small></div></div>
+          <div class="tl"><div class="d">T − 1</div><div class="t">提前 1 天<small>可选</small></div></div>
+          <div class="tl on"><div class="d">T 0</div><div class="t">生日当天<small>提醒直接写「生日快乐 · 年满 N 岁」</small></div></div>
+        </div>
+
+        <div class="items">
+          <div class="item rev"><div class="k">Feb 29</div><h3>2 月 29 日出生也说得清</h3><p>平年算 2 月 28 日（多数人的习惯），也可切到 3 月 1 日。只有生日真的是 2/29 时，这一项才出现。</p></div>
+          <div class="item rev d1"><div class="k">Zone</div><h3>出生时间精确到分钟</h3><p>日期 + 时区 + 时分，可随时修改；改动后已活时长、倒计时与全部提醒按新时间重算，改前有二次确认。</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec" id="s3">
+    <div class="wrap sec-grid">
+      <aside class="sec-aside rev">
+        <div class="num">03</div>
+        <div class="kicker"><i></i><span>Reminder</span></div>
+        <h2>两条通道送同一条提醒，<br>但只会响一次。</h2>
+      </aside>
+      <div>
+        <p class="desc rev">主通道用 AlarmManager 准点触发，WorkManager 在同一时刻兜底补一发；两条通道都通过同一个 key 做原子认领，不会重复响铃。提醒时间可自己调，精确到分钟。</p>
+        <div class="items">
+          <div class="item rev"><div class="k">Doze</div><h3>被系统压住也有备份</h3><p>没有精确闹钟权限时自动降级成「大致准时」，偏差几分钟到几十分钟；兜底任务补上，不会整天静默。</p></div>
+          <div class="item rev d1"><div class="k">Reboot</div><h3>重启、改时区、升级都重排</h3><p>监听开机、改时间、改时区与应用升级事件，重新排全部提醒——闹钟在重启后一定会丢。</p></div>
+          <div class="item rev d2"><div class="k">No spam</div><h3>过期不补发</h3><p>触发时间过了 12 小时以上直接丢弃，避免开机后收到一串过期提醒。关掉的档位不会再排。</p></div>
+          <div class="item rev d3"><div class="k">Local</div><h3>通知里就是那句话</h3><p>「距离生日还有 3 天」「提前 3 天提醒 · 即将年满 29 岁」，点开直达首页，没有中间页。</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec" id="s4">
+    <div class="wrap sec-grid">
+      <aside class="sec-aside rev">
+        <div class="num">04</div>
+        <div class="kicker"><i></i><span>Widgets</span></div>
+        <h2>两块桌面小组件，<br>不打开 App 也在计时。</h2>
+      </aside>
+      <div>
+        <p class="desc rev">「已活时长」与「生日倒计时」各一块，2×1 / 4×1 / 4×2 三档自适应，深浅色跟随系统，点击直接进应用并立刻刷新。</p>
+
+        <div class="widgets rev">
+          <div class="wg">
+            <div class="k">已活时长 · ELAPSED</div>
+            <div class="v n">28<small>年</small>11<small>月</small>26<small>天</small></div>
+            <div class="s n">06 : 02 : 08 · 总 10,587 天</div>
+          </div>
+          <div class="wg">
+            <div class="k">生日倒计时 · BIRTHDAY</div>
+            <div class="v n">4<small>天</small></div>
+            <div class="s n">17 : 57 : 52 · 年满 29 岁</div>
+          </div>
+        </div>
+
+        <div class="items">
+          <div class="item rev"><div class="k">Honest</div><h3>刷新不是每秒的，这是机制</h3><p>系统把小组件刷新压到最快约 15 分钟一次，两次刷新之间秒数是定格的。要每秒跳动只能常驻前台服务——那是电池杀手，本应用不做。</p></div>
+          <div class="item rev d1"><div class="k">Tap</div><h3>点一下就刷新</h3><p>WorkManager 每 15 分钟刷一次，点小组件打开 App 时立刻刷一次。想要最新的数，碰一下就好。</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec" id="s5">
+    <div class="wrap sec-grid">
+      <aside class="sec-aside rev">
+        <div class="num">05</div>
+        <div class="kicker"><i></i><span>Appearance</span></div>
+        <h2>只有黑白灰，<br>没有一处彩色强调。</h2>
+      </aside>
+      <div>
+        <p class="desc rev">Material 3 只用来拿基础组件，色板整块换成黑白 + 两级灰，不留默认的紫和蓝。主题跟随系统，也可以手动锁死深色或浅色。</p>
+
+        <div class="chips rev">
+          <span class="chip on">深色</span><span class="chip">浅色</span><span class="chip">跟随系统</span>
+        </div>
+        <div class="chips rev d1">
+          <span class="chip on">系统字体</span><span class="chip">衬线</span><span class="chip">等宽</span><span class="chip">自定义 .ttf / .otf</span>
+        </div>
+
+        <div class="share rev d2">
+          <div class="k">人生计时 &nbsp;·&nbsp; LIFE CLOCK</div>
+          <div class="v n">28<em>年</em>11<em>月</em>26<em>天</em></div>
+          <div class="v n" style="font-size:25px;opacity:.95">06 : 02 : 08</div>
+          <div class="t">总 10,587 天 &nbsp;·&nbsp; 914,738,528 秒</div>
+        </div>
+
+        <div class="items">
+          <div class="item rev"><div class="k">Share</div><h3>一键生成分享卡片</h3><p>按当前主题渲染一张黑白卡片（离屏录制，不上屏），存相册或走系统分享。不用截图，也不会带上状态栏。</p></div>
+          <div class="item rev d1"><div class="k">Type</div><h3>数字不抖，标签很轻</h3><p>大数字用 Light / ExtraLight 收紧字距，小标签把字距拉开——轻、疏、贵，是这套排版想要的观感。</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="sec" id="s6">
+    <div class="wrap sec-grid">
+      <aside class="sec-aside rev">
+        <div class="num">06</div>
+        <div class="kicker"><i></i><span>Privacy</span></div>
+        <h2>它连不上网，<br>所以也传不出去。</h2>
+      </aside>
+      <div class="privacy-grid">
+        <div class="rev">
+          <p class="desc" style="margin-top:0">安装包里没有 <b style="color:var(--fg);font-weight:500">INTERNET</b> 权限。没有账号、没有云同步、没有统计 SDK、没有推送服务。出生时间与偏好只写进本机 DataStore，桌面小组件读的是同一份。</p>
+          <div class="badges">
+            <span class="badge"><i></i>无账号</span>
+            <span class="badge"><i></i>无网络权限</span>
+            <span class="badge"><i></i>无广告</span>
+            <span class="badge"><i></i>无内购</span>
+          </div>
+        </div>
+        <dl class="spec rev d1" style="margin-top:0">
+          <div class="row"><dt>申请权限</dt><dd>通知、精确闹钟、开机自启<br><span style="color:var(--gray)">Android 9 及以下额外需要存储权限以存图</span></dd></div>
+          <div class="row"><dt>数据位置</dt><dd>应用私有目录 · DataStore</dd></div>
+          <div class="row"><dt>卸载之后</dt><dd>随应用一并清除，没有残留副本</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section class="sec" id="s7">
+    <div class="wrap sec-grid">
+      <aside class="sec-aside rev">
+        <div class="num">07</div>
+        <div class="kicker"><i></i><span>Specs</span></div>
+        <h2>技术规格</h2>
+      </aside>
+      <div>
+        <p class="desc rev">原生 Kotlin + Jetpack Compose，不套壳、不嵌 WebView。系统能力全用官方方案：DataStore、WorkManager、AlarmManager、Glance。</p>
+        <dl class="spec rev">
+          <div class="row"><dt>应用包名</dt><dd class="mono">com.zaka.lifeclock</dd></div>
+          <div class="row"><dt>版本</dt><dd>1.1.0</dd></div>
+          <div class="row"><dt>系统要求</dt><dd>Android 8.0 及以上（API 26）· 目标 API 34</dd></div>
+          <div class="row"><dt>技术栈</dt><dd>Kotlin · Jetpack Compose · Material 3（自定义黑白主题）· DataStore · WorkManager + AlarmManager · Glance 1.1</dd></div>
+          <div class="row"><dt>时间计算</dt><dd>java.time（ZonedDateTime / Duration），不用废弃的 Calendar</dd></div>
+          <div class="row"><dt>自动化测试</dt><dd>15 个用例：10 个日期边界 + 5 个真实启动冒烟</dd></div>
+          <div class="row"><dt>色板</dt><dd class="mono">#000000 · #FFFFFF · #8E8E93 · #1C1C1E · #F2F2F7</dd></div>
+          <div class="row"><dt>字号</dt><dd class="mono">60 / 48 / 36 / 26 / 22 / 15 / 13 / 11 / 10 sp</dd></div>
+          <div class="row"><dt>栅格</dt><dd>8dp 体系 · 页面留白 24dp · 分割线 0.7dp</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section class="sec" id="s8">
+    <div class="wrap sec-grid">
+      <aside class="sec-aside rev">
+        <div class="num">08</div>
+        <div class="kicker"><i></i><span>Limits</span></div>
+        <h2>先说清楚它做不到什么</h2>
+      </aside>
+      <div>
+        <p class="desc rev">有些是 Android 的限制，有些是刻意的取舍。写在前面，比装完才发现好。</p>
+        <ul class="limits rev">
+          <li><span><b>小组件秒数会定格。</b>系统刷新下限约 15 分钟，追求每秒跳动只能常驻前台服务，不做。</span></li>
+          <li><span><b>自定义字体不进小组件。</b>RemoteViews 跑在桌面进程里，读不到应用私有目录；应用内不受影响。</span></li>
+          <li><span><b>农历生日还没做。</b>公历生日已完整支持；农历需要一张会过期的转换表，不塞进主流程。</span></li>
+          <li><span><b>精确提醒要看系统心情。</b>国产 ROM 还需在「自启动 / 后台弹通知」里放行，否则可能被拦。</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- END -->
+  <section class="end">
+    <div class="wrap">
+      <div class="sec-aside rev" style="position:static">
+        <div class="kicker"><i></i><span>Life Clock</span></div>
+        <h2>时间不需要被管理，<br>只需要被看见。</h2>
+        <p>装完填一次出生时间，就可以把手机放下了。</p>
+        <div class="cta">
+          <a class="btn btn-solid" href="download/LifeClock.apk" download><span>下载安装包</span><i class="ri-download-2-line"></i></a>
+        </div>
+      </div>
+
+      <div class="steps rev">
+        <div class="step"><i>01</i><b>下载安装包</b><span>点「下载安装包」，APK 存到手机任意目录</span></div>
+        <div class="step"><i>02</i><b>允许安装</b><span>首次安装时在系统弹窗里允许「安装未知应用」</span></div>
+        <div class="step"><i>03</i><b>填一次出生时间</b><span>精确到分钟，可选出生地时区；之后每次打开就是答案</span></div>
+      </div>
+
+      <div class="wm" aria-hidden="true">LIFE&nbsp;CLOCK</div>
+
+      <div class="foot">
+        <span>人生计时 v1.1.0</span>
+        <span>com.zaka.lifeclock</span>
+        <span>ANDROID 8.0+</span>
+        <span class="spacer"></span>
+        <span>数据只存在本机</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ═════ 1. 禁缩放 ═════ */
+(function () {
+  var stop = function (e) { e.preventDefault(); };
+  document.addEventListener('gesturestart', stop, { passive: false });
+  document.addEventListener('gesturechange', stop, { passive: false });
+  document.addEventListener('gestureend', stop, { passive: false });
+
+  var lastEnd = 0;
+  document.addEventListener('touchend', function () { lastEnd = Date.now(); }, { passive: true });
+  document.addEventListener('touchstart', function (e) {
+    if (e.touches && e.touches.length > 1) { e.preventDefault(); return; }
+    if (Date.now() - lastEnd < 300) e.preventDefault();
+  }, { passive: false });
+
+  window.addEventListener('wheel', function (e) {
+    if (e.ctrlKey || e.metaKey) e.preventDefault();
+  }, { passive: false });
+})();
+
+/* ═════ 2. 主题 ═════ */
+(function () {
+  var root = document.documentElement;
+  var saved = null;
+  try { saved = localStorage.getItem('lc-theme'); } catch (e) {}
+  if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
+  sync();
+
+  document.getElementById('themeBtn').addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('lc-theme', next); } catch (e) {}
+    sync();
+  });
+
+  function sync() {
+    var dark = root.getAttribute('data-theme') === 'dark';
+    var m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.setAttribute('content', dark ? '#000000' : '#FFFFFF');
+    document.body.style.background = dark ? '#000' : '#fff';
+  }
+})();
+
+/* ═════ 3. 计时（复刻 ClockMath.kt） ═════ */
+(function () {
+  var BIRTH = { y: 1997, m: 11, d: 2, h: 8, mi: 30 };
+
+  function mk(y, m, d, h, mi, s) { return new Date(y, m - 1, d, h || 0, mi || 0, s || 0, 0); }
+  function parts(t) {
+    return { y: t.getFullYear(), m: t.getMonth() + 1, d: t.getDate(),
+             h: t.getHours(), mi: t.getMinutes(), s: t.getSeconds() };
+  }
+  function dim(y, m) { return new Date(y, m, 0).getDate(); }
+  function addMonths(base, n) {
+    var total = base.getMonth() + n;
+    var y = base.getFullYear() + Math.floor(total / 12);
+    var m = total % 12;
+    if (m < 0) { m += 12; y -= 1; }
+    return mk(y, m + 1, Math.min(base.getDate(), dim(y, m + 1)),
+              base.getHours(), base.getMinutes(), base.getSeconds());
+  }
+  function addYears(b, n) { return addMonths(b, n * 12); }
+
+  var birth = mk(BIRTH.y, BIRTH.m, BIRTH.d, BIRTH.h, BIRTH.mi, 0);
+
+  function pad2(v) { return String(v).padStart(2, '0'); }
+  function group(v) {
+    var s = String(v), out = '';
+    for (var i = 0; i < s.length; i++) {
+      if (i > 0 && (s.length - i) % 3 === 0) out += ',';
+      out += s[i];
+    }
+    return out;
+  }
+  function tick(el, text) {
+    if (!el || el.textContent === text) return;
+    el.textContent = text;
+    el.classList.remove('tick');
+    void el.offsetWidth;
+    el.classList.add('tick');
+  }
+
+  function elapsed(now) {
+    var totalMs = now - birth;
+    if (totalMs <= 0) return null;
+
+    var years = now.getFullYear() - birth.getFullYear();
+    var anchor = addYears(birth, years);
+    if (anchor > now) { years -= 1; anchor = addYears(birth, years); }
+
+    var months = 0, cursor = anchor, next;
+    for (;;) {
+      next = addMonths(cursor, 1);
+      if (next > now) break;
+      cursor = next; months++;
+    }
+    var days = 0;
+    for (;;) {
+      var p = parts(cursor);
+      next = mk(p.y, p.m, p.d + 1, p.h, p.mi, p.s);
+      if (next > now) break;
+      cursor = next; days++;
+    }
+
+    var rest = Math.floor((now - cursor) / 1000);
+    return {
+      years: years, months: months, days: days,
+      hours: Math.floor(rest / 3600),
+      minutes: Math.floor(rest / 60) % 60,
+      seconds: rest % 60,
+      totalDays: Math.floor(totalMs / 864e5),
+      totalHours: Math.floor(totalMs / 36e5),
+      totalMinutes: Math.floor(totalMs / 6e4),
+      totalSeconds: Math.floor(totalMs / 1000)
+    };
+  }
+
+  var WEEK = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+  function isLeap(y) { return new Date(y, 1, 29).getMonth() === 1; }
+  function bDate(y) {
+    if (BIRTH.m === 2 && BIRTH.d === 29 && !isLeap(y)) return mk(y, 2, 28, 0, 0, 0);
+    return mk(y, BIRTH.m, BIRTH.d, 0, 0, 0);
+  }
+  function birthday(now) {
+    var today = mk(now.getFullYear(), now.getMonth() + 1, now.getDate(), 0, 0, 0);
+    var year = now.getFullYear();
+    var date = bDate(year);
+    if (date < today) { year++; date = bDate(year); }
+    var moment = mk(year, date.getMonth() + 1, date.getDate(), BIRTH.h, BIRTH.mi, 0);
+    var rem = Math.max(0, moment - now);
+    return {
+      date: date, year: year,
+      days: Math.floor(rem / 864e5),
+      hours: Math.floor(rem / 36e5) % 24,
+      minutes: Math.floor(rem / 6e4) % 60,
+      seconds: Math.floor(rem / 1000) % 60,
+      isToday: date.getTime() === today.getTime(),
+      ageTurning: year - BIRTH.y
+    };
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  function render() {
+    var now = new Date();
+    var e = elapsed(now);
+    if (e) {
+      tick($('y'), String(e.years));
+      tick($('mo'), String(e.months));
+      tick($('d'), String(e.days));
+      tick($('h'), pad2(e.hours));
+      tick($('mi'), pad2(e.minutes));
+      tick($('s'), pad2(e.seconds));
+      tick($('td'), group(e.totalDays));
+      tick($('th'), group(e.totalHours));
+      tick($('tm'), group(e.totalMinutes));
+      tick($('ts'), group(e.totalSeconds));
+    }
+
+    var b = birthday(now);
+    if (b.isToday) {
+      var bd = $('bd');
+      if (bd && bd.textContent !== '今天生日') {
+        bd.textContent = '今天生日';
+        bd.style.fontSize = '26px';
+        bd.classList.add('tick');
+      }
+      var bt = $('btime'); if (bt) bt.style.display = 'none';
+    } else {
+      tick($('bd'), String(b.days));
+      tick($('btime'), pad2(b.hours) + ':' + pad2(b.minutes) + ':' + pad2(b.seconds));
+    }
+
+    var bp = parts(b.date);
+    var sub = bp.y + '年' + bp.m + '月' + bp.d + '日 · ' + WEEK[b.date.getDay()] + ' · 年满 ' + b.ageTurning + ' 岁';
+    var se = $('bdate');
+    if (se && se.textContent !== sub) se.textContent = sub;
+
+    var sb = $('sbTime');
+    if (sb) {
+      var t = pad2(now.getHours()) + ':' + pad2(now.getMinutes());
+      if (sb.textContent !== t) sb.textContent = t;
+    }
+  }
+
+  function loop() {
+    render();
+    setTimeout(loop, 1000 - (Date.now() % 1000) + 8);
+  }
+  render();
+  loop();
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) render(); });
+})();
+
+/* ═════ 4. 滚动：进度条 / 视差 / 进场 ═════ */
+(function () {
+  var bar = document.getElementById('progress');
+  var phone = document.getElementById('phone');
+  var spot = document.getElementById('spot');
+  var ticking = false;
+
+  function onScroll() {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var top = h.scrollTop || document.body.scrollTop;
+    var p = max > 0 ? top / max : 0;
+    bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+
+    if (phone && window.innerWidth >= 940) {
+      var y = Math.min(top * 0.06, 60);
+      phone.style.translate = '0 ' + (-y).toFixed(1) + 'px';
+    }
+    ticking = false;
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
+  }, { passive: true });
+  onScroll();
+
+  // 鼠标聚光
+  if (window.matchMedia('(hover:hover)').matches) {
+    var sx = 0, sy = 0, cx = 0, cy = 0;
+    window.addEventListener('pointermove', function (e) { sx = e.clientX; sy = e.clientY; }, { passive: true });
+    (function follow() {
+      cx += (sx - cx) * 0.08;
+      cy += (sy - cy) * 0.08;
+      spot.style.transform = 'translate3d(' + (cx - 320) + 'px,' + (cy - 320) + 'px,0)';
+      requestAnimationFrame(follow);
+    })();
+  }
+
+  // 进场
+  var els = document.querySelectorAll('.rev');
+  if (!('IntersectionObserver' in window)) {
+    for (var i = 0; i < els.length; i++) els[i].classList.add('in');
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { rootMargin: '0px 0px -6% 0px', threshold: 0.06 });
+  for (var j = 0; j < els.length; j++) io.observe(els[j]);
+})();
+</script>
+</body>
+</html>
